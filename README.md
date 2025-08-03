@@ -1,4 +1,4 @@
-<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/icon.png" width="150"/></p><h1 align="center">Bugle Maestro (Thunderstore build)</h1>
+<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/icon.png" width="150"/></p><h1 align="center">Bugle Maestro (Thunderstore build)</h1>
 
 [![GitHub Page](https://img.shields.io/badge/GitHub-Thunderstore%20Build-blue?logo=github&style=for-the-badge)](https://github.com/alexandria-p/BugleMaestro)
 
