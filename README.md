@@ -1,22 +1,19 @@
-<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/ContentWarning-KeepCameraAfterDeath/main/logo.png" width="150"/></p><h1 align="center">Bugle Maestro (Thunderstore build)</h1>
+<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/icon.png" width="150"/></p><h1 align="center">Bugle Maestro (Thunderstore build)</h1>
 
 [![GitHub Page](https://img.shields.io/badge/GitHub-Thunderstore%20Build-blue?logo=github&style=for-the-badge)](https://github.com/alexandria-p/BugleMaestro)
 
 [![Thunderstore Page](https://img.shields.io/thunderstore/v/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore)](https://thunderstore.io/c/content-warning/p/alexandria_p/Bugle_Maestro/)
 [![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/content-warning/p/alexandria_p/Bugle_Maestro)
 
-[![GitHub Page](https://img.shields.io/badge/GitHub-Steam%20Build-blue?logo=github&style=for-the-badge)](https://github.com/alexandria-p/BugleMaestro)
-
-
 ## Description
 
-Play the bugle 📯
+Play the bugle 📯 using your keyboard keys.
 
 ## Intructions
 
 // todo
 
-## Are there any other ways I can play the Bugle?
+### Are there any other ways I can play the Bugle?
 
 Absolutely! If you'd like to play the bugle like a real chambered brass instrument, please checkout Virtuoso (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
 
