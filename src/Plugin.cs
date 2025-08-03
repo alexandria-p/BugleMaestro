@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using BugleMaestro.Patches;
+using BugleMaestro.Helpers;
 
 namespace BugleMaestro;
 
@@ -19,14 +20,24 @@ namespace BugleMaestro;
 [BepInAutoPlugin]
 public partial class Plugin : BaseUnityPlugin
 {
+    public static Plugin Instance { get; private set; } = null!;
+
     internal static ManualLogSource Log { get; private set; } = null!;
+    private Harmony? _harmonyInstance;
+    public readonly static string LOG_PREFIX = "BugleMaestro";
+
+
+    public ScaleEnum CurrentNote { get; set; } = ScaleHelper.DEFAULT_NOTE;
+    public OctaveEnum CurrentOctave { get; set; } = ScaleHelper.DEFAULT_OCTAVE;
+    public SemitoneModifierEnum CurrentSemitoneModifier { get; set; } = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
 
     private void Awake()
     {
-//#if (!no-tutorial)
+        Instance = this;
+        //#if (!no-tutorial)
         // BepInEx gives us a logger which we can use to log information.
         // See https://lethal.wiki/dev/fundamentals/logging
-//#endif
+        //#endif
         Log = Logger;
 
         //#if (!no-tutorial)
@@ -38,10 +49,26 @@ public partial class Plugin : BaseUnityPlugin
 
         // Log our awake here so we can see it in LogOutput.log file
         //#endif
-        //new Harmony(Info.Metadata.GUID).PatchAll(); // Info.Metadata.GUID // "com.github.PEAKModding.AlexModTest"
-        Harmony.CreateAndPatchAll(typeof(BugleSFXPatch)); // works
-
-        Log.LogInfo($"Plugin {Name} is loaded!");
+        //_harmonyInstance = new Harmony(Info.Metadata.GUID).PatchAll(); // Info.Metadata.GUID // "com.github.PEAKModding.AlexModTest"
+        _harmonyInstance = Harmony.CreateAndPatchAll(typeof(BugleSFXPatch)); // works
+        Log.LogInfo($"{LOG_PREFIX}: Plugin {Name} is loaded!");
        
+    }
+
+
+    private void OnDestroy()
+    {
+        Log.LogInfo("{LOG_PREFIX}: Plugin destroying...");
+        Log.LogDebug("{LOG_PREFIX}: Removing harmony patches...");
+        // todo
+        if ( _harmonyInstance != null )
+        {
+            _harmonyInstance!.UnpatchSelf();
+        }
+        else
+        {
+            Log.LogInfo("{LOG_PREFIX}: null harmony instance OnDestroy");
+        }
+        Log.LogInfo("{LOG_PREFIX}: Plugin destroyed!");
     }
 }
