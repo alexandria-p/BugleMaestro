@@ -26,10 +26,11 @@ public partial class Plugin : BaseUnityPlugin
     private Harmony? _harmonyInstance;
     public readonly static string LOG_PREFIX = "BugleMaestro";
 
-
+    // todo - track per player?
     public ScaleEnum CurrentNote { get; set; } = ScaleHelper.DEFAULT_NOTE;
     public OctaveEnum CurrentOctave { get; set; } = ScaleHelper.DEFAULT_OCTAVE;
     public SemitoneModifierEnum CurrentSemitoneModifier { get; set; } = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
+    public bool IsNotePlaying { get; set; } = false;
 
     private void Awake()
     {
