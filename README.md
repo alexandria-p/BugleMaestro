@@ -13,6 +13,8 @@ Play the bugle 📯 using your keyboard keys.
 
 // todo
 
+Currently keyboard-only (no controller support).
+
 ### Are there any other ways I can play the Bugle?
 
 Absolutely! If you'd like to play the bugle like a real chambered brass instrument, please checkout Virtuoso (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
@@ -54,6 +56,7 @@ None. Please report any bugs to the Github page or in the Peak Modding Discord.
 # Future planned features
 
 - Add instructions for Bugle controls in-game by displaying instructions onscreen using the UI.
+- Add controller support
 
 # Can I copy this mod's code? Can I contribute to this project?
 
