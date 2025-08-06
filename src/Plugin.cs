@@ -25,6 +25,7 @@ public partial class Plugin : BaseUnityPlugin
 
         //_harmonyInstance = new Harmony(Info.Metadata.GUID).PatchAll(); // Info.Metadata.GUID // "com.github.PEAKModding.AlexModTest"
         _harmonyInstance = Harmony.CreateAndPatchAll(typeof(BugleSFXPatch)); // works
+        _harmonyInstance = Harmony.CreateAndPatchAll(typeof(CharacterItemsPatch));
         Log.LogInfo($"{LOG_PREFIX}: Plugin {Name} is loaded!");
     }
 
