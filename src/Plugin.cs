@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using BugleMaestro.Patches;
 using BugleMaestro.Helpers;
+using System.Collections.Generic;
 
 namespace BugleMaestro;
 
@@ -26,30 +27,24 @@ public partial class Plugin : BaseUnityPlugin
     private Harmony? _harmonyInstance;
     public readonly static string LOG_PREFIX = "BugleMaestro";
 
-    // todo - track per player?
+    // todo - track per BUGLE !?
     public ScaleEnum CurrentNote { get; set; } = ScaleHelper.DEFAULT_NOTE;
+    public RawNoteInputEnum CurrentRawNote { get; set; } = ScaleHelper.DEFAULT_RAW_NOTE;
     public OctaveEnum CurrentOctave { get; set; } = ScaleHelper.DEFAULT_OCTAVE;
     public SemitoneModifierEnum CurrentSemitoneModifier { get; set; } = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
-    public bool IsNotePlaying { get; set; } = false;
+    public bool IsANotePlaying { get; set; } = false;
+
+    // Track inputs
+    public HashSet<OctaveEnum> LastFrameOctaveInput { get; set; } = new HashSet<OctaveEnum>();
+    public HashSet<SemitoneModifierEnum> LastFrameSemitoneInput { get; set; } = new HashSet<SemitoneModifierEnum>();
+    public List<RawNoteInputEnum> LastFrameRawNoteInput { get; set; } = new List<RawNoteInputEnum>(); // list to preserve insertion order
 
     private void Awake()
     {
         Instance = this;
-        //#if (!no-tutorial)
-        // BepInEx gives us a logger which we can use to log information.
-        // See https://lethal.wiki/dev/fundamentals/logging
-        //#endif
         Log = Logger;
 
-        //#if (!no-tutorial)
-        // BepInEx also gives us a config file for easy configuration.
-        // See https://lethal.wiki/dev/intermediate/custom-configs
 
-        // We can apply our hooks here.
-        // See https://lethal.wiki/dev/fundamentals/patching-code
-
-        // Log our awake here so we can see it in LogOutput.log file
-        //#endif
         //_harmonyInstance = new Harmony(Info.Metadata.GUID).PatchAll(); // Info.Metadata.GUID // "com.github.PEAKModding.AlexModTest"
         _harmonyInstance = Harmony.CreateAndPatchAll(typeof(BugleSFXPatch)); // works
         Log.LogInfo($"{LOG_PREFIX}: Plugin {Name} is loaded!");

@@ -1,7 +1,8 @@
 using HarmonyLib;
 using UnityEngine;
 using BugleMaestro.Helpers;
-using UnityEngine.UIElements;
+using System.Collections.Generic;
+using System.Linq;
 
 
 namespace BugleMaestro.Patches;
@@ -14,8 +15,8 @@ public class BugleSFXPatch
     // todo - override movement while playing?
 
 
-    // 1. todo - tapping z -> m triggers toot, not just CLICK
-    // 2. todo - if note changes (from prevnote to newnote) while playing, it starts toot again with new note
+    // 1. todo - the TOOT method creates a new toot (not just clicking now)
+    // 2. todo - only run this update method to calculate keychange and TOOTS if bugle is held by player
 
     [HarmonyPatch(nameof(BugleSFX.Update))]
     [HarmonyPostfix]
@@ -23,74 +24,74 @@ public class BugleSFXPatch
     {
         // Don't use elseif - or multikey inputs may not register properly.
 
-        // 3. todo - if already playing a note,
-        // and octave or semitone changes,
-        // update note & toot again
-        // (requires checking whether a note was already sustained last frame compared to this frame)
-
-        var prevFrameNote = (int)Plugin.Instance.CurrentNote;
+        HashSet<OctaveEnum> octavesBeingPressedThisFrame = new();
+        HashSet<SemitoneModifierEnum> semitonesBeingPressedThisFrame = new();
+        HashSet<RawNoteInputEnum> rawNotesBeingPressedThisFrame = new();
 
         // Get Octave
         if (Input.GetKey(KeyCode.DownArrow))
         {
+            octavesBeingPressedThisFrame.Add(OctaveEnum.Lowest);
             ScaleHelper.SetOctave(OctaveEnum.Lowest);
         }
         if (Input.GetKey(KeyCode.UpArrow))
         {
+            octavesBeingPressedThisFrame.Add(OctaveEnum.Highest);
             ScaleHelper.SetOctave(OctaveEnum.Highest);
         }
         if (!Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow))
         {
+            octavesBeingPressedThisFrame.Add(OctaveEnum.Neutral);
             ScaleHelper.SetOctave(OctaveEnum.Neutral);
         }
 
         // Get Semitone
         if (Input.GetKey(KeyCode.LeftArrow))
         {
+            semitonesBeingPressedThisFrame.Add(SemitoneModifierEnum.Flat);
             ScaleHelper.SetSemitoneModifier(SemitoneModifierEnum.Flat);
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
+            semitonesBeingPressedThisFrame.Add(SemitoneModifierEnum.Sharp);
             ScaleHelper.SetSemitoneModifier(SemitoneModifierEnum.Sharp);
         }
         if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))
         {
+            semitonesBeingPressedThisFrame.Add(SemitoneModifierEnum.Natural);
             ScaleHelper.SetSemitoneModifier(SemitoneModifierEnum.Natural);
         }
 
         // Get Note/Pitch
         // Z -> M keys == C -> B notes
 
-        int? currentFrameNote = null;
-
-
         if (Input.GetKey(KeyCode.Z))
         {
-            UpdateNote(RawNoteInputEnum.C);
+            rawNotesBeingPressedThisFrame.Add(RawNoteInputEnum.C);
         }
         if (Input.GetKey(KeyCode.X))
         {
-            UpdateNote(RawNoteInputEnum.D);
+            rawNotesBeingPressedThisFrame.Add(RawNoteInputEnum.D);
         }
         if (Input.GetKey(KeyCode.C))
         {
-            UpdateNote(RawNoteInputEnum.E);
+            rawNotesBeingPressedThisFrame.Add(RawNoteInputEnum.E);
         }
         if (Input.GetKey(KeyCode.V))
         {
-            UpdateNote(RawNoteInputEnum.F);
+            rawNotesBeingPressedThisFrame.Add(RawNoteInputEnum.F);
         }
         if (Input.GetKey(KeyCode.B))
         {
-            UpdateNote(RawNoteInputEnum.G);
+            rawNotesBeingPressedThisFrame.Add(RawNoteInputEnum.G);
         }
         if (Input.GetKey(KeyCode.N))
         {
-            UpdateNote(RawNoteInputEnum.A);
+            rawNotesBeingPressedThisFrame.Add(RawNoteInputEnum.A);
         }
         if (Input.GetKey(KeyCode.M))
         {
-            UpdateNote(RawNoteInputEnum.B);
+            rawNotesBeingPressedThisFrame.Add(RawNoteInputEnum.B);
         }
         if (!Input.GetKey(KeyCode.Z)
             && !Input.GetKey(KeyCode.X)
@@ -103,29 +104,109 @@ public class BugleSFXPatch
             ScaleHelper.ResetToDefaultPitch();
         }
 
-        void UpdateNote(RawNoteInputEnum rawNoteSustained)
+        RawNoteInputEnum? newTootRawNote = FindNewTootRawNote();
+        if (newTootRawNote != null)
         {
-            // todo - if note change (octave/semitone) detected since last frame, re-toot with new note.
-            var intermediaryNote = (int)ScaleHelper.RecalculateNote(rawNoteSustained);
+            Plugin.Instance.IsANotePlaying = true;
+            ScaleHelper.SetRawNote(newTootRawNote.Value);            
+            ScaleHelper.RecalculateAndSetCurrentNote();
+            ScaleHelper.Toot(Plugin.Instance.CurrentNote);
+        }
 
-            // either if note changes from prev Frame, or no note was playing and now there is one:
-            //(Allows us to "walk" DOWN the scale)
-            // if there are more than 2 notes pressed at a time, it will prioritise the highest pitch.
-            if (!Plugin.Instance.IsNotePlaying || intermediaryNote != prevFrameNote)
+        // don't update key tracking until after calculations.
+        UpdateKeyInputTracking();
+
+        void UpdateKeyInputTracking()
+        {
+            Plugin.Instance.LastFrameOctaveInput.RemoveWhere(_ => !octavesBeingPressedThisFrame.Contains(_));
+            Plugin.Instance.LastFrameSemitoneInput.RemoveWhere(_ => !semitonesBeingPressedThisFrame.Contains(_));
+            Plugin.Instance.LastFrameRawNoteInput.RemoveAll(_ => !rawNotesBeingPressedThisFrame.Contains(_));
+
+            // no need to do an 'if' check before adding, as hashset are unique elements.
+            foreach (var keypress in octavesBeingPressedThisFrame)
+                Plugin.Instance.LastFrameOctaveInput.Add(keypress);
+
+            foreach (var keypress in semitonesBeingPressedThisFrame)
+                Plugin.Instance.LastFrameSemitoneInput.Add(keypress);
+
+            foreach (var keypress in rawNotesBeingPressedThisFrame)
             {
-                currentFrameNote = intermediaryNote;
+                if (!Plugin.Instance.LastFrameRawNoteInput.Contains(keypress)) // cause this is a list to preserve insertion order
+                {
+                    Plugin.Instance.LastFrameRawNoteInput.Add(keypress);
+                }                
             }
         }
 
-        // only want to TOOT once per Update, if there has been a change in note OR if no note was playing, and now there is.
-        if (currentFrameNote != null)
+        RawNoteInputEnum? FindNewTootRawNote()
         {
-            Plugin.Instance.IsNotePlaying = true;
-            ScaleHelper.Toot((ScaleEnum)currentFrameNote);
-        }
+            if (!rawNotesBeingPressedThisFrame.Any())
+            {
+                return null; // early exit
+            }
 
+            foreach (var rawNote in rawNotesBeingPressedThisFrame)
+            {
+                // early exit from foreach loop if you find a valid new note to TOOT.
+                if (!Plugin.Instance.IsANotePlaying || 
+                    !Plugin.Instance.LastFrameRawNoteInput.Contains(rawNote))
+                // always play a note if there were none last frame, and now there is on this frame:
+                // OR always play the note if this is a new rawnote keypress (was not held last frame)
+                {
+                    return rawNote;
+                }
+            }
 
-        // todo - handle holding down 2 keys at a time, where it jumps back and forth between both: (make a list of "deadkeys" and remove from deadkey list once key is no longer being input???)
+            // if we are still here, then we didn't find any new raw keypresses to play.
+            // so let's see if there was an octave or semitone change this frame, that necessitates a new note.
+            
+            if (Plugin.Instance.LastFrameOctaveInput.SetEquals(octavesBeingPressedThisFrame)
+                && Plugin.Instance.LastFrameSemitoneInput.SetEquals(semitonesBeingPressedThisFrame)
+                )
+            {
+                // potentially - the octave/semitone is the same but user releases one of multiple keys
+                // so lets recalculate notes.
+                // early exit with no change if the note sustained last frame is still being held:
+                if (rawNotesBeingPressedThisFrame.Contains(Plugin.Instance.CurrentRawNote))
+                {
+                    return null; // early exit with no new note.
+                }
+
+                // (otherwise....notes are added to the LastFrameRawNoteInput list in the order they were pressed ("lists preserve insertion order"). Let's go back to the most recent press.)
+                for (var i = (Plugin.Instance.LastFrameRawNoteInput.Count) - (1); i >= 0; i--)
+                {
+                    var key = Plugin.Instance.LastFrameRawNoteInput[i];
+                    if (rawNotesBeingPressedThisFrame.Contains(key))
+                    {
+                        return key;
+                    }
+                }
+            }
+            // if note change (octave/semitone) detected since last frame, re-toot with new note.
+            else if (rawNotesBeingPressedThisFrame.Any())
+            {
+                // else - there has been a change in octave or semitone. 
+                // so lets recalculate notes.
+                // let's try to use the note sustained last frame, if it is still being held:
+                if (rawNotesBeingPressedThisFrame.Contains(Plugin.Instance.CurrentRawNote))
+                {
+                    return Plugin.Instance.CurrentRawNote;
+                }
+
+                // (otherwise....notes are added to the LastFrameRawNoteInput list in the order they were pressed ("lists preserve insertion order"). Let's go back to the most recent press.)
+                for (var i = (Plugin.Instance.LastFrameRawNoteInput.Count) - (1); i >= 0; i--)
+                {
+                    var key = Plugin.Instance.LastFrameRawNoteInput[i];
+                    if (rawNotesBeingPressedThisFrame.Contains(key))
+                    {
+                        return key; 
+                    }
+                }
+            }
+
+            //fall-through
+            return null;
+        }        
     }
 
     [HarmonyPatch(nameof(BugleSFX.RPC_StartToot))]
@@ -134,7 +215,7 @@ public class BugleSFXPatch
     {
         Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: TOOOOOT!");
 
-        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {Plugin.Instance.CurrentNote.ToString()}");
+        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {Plugin.Instance.CurrentNote.ToString()}");
     }
 
     [HarmonyPatch(nameof(BugleSFX.RPC_EndToot))]
