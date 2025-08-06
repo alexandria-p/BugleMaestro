@@ -14,116 +14,49 @@ public class ScaleHelper
     public static ScaleEnum LOWEST_NOTE => Enum.GetValues(typeof(ScaleEnum)).Cast<ScaleEnum>().OrderBy(x => x).First();
     public static ScaleEnum HIGHEST_NOTE => Enum.GetValues(typeof(ScaleEnum)).Cast<ScaleEnum>().OrderBy(x => x).Last();
 
-    public static void ResetToDefaultPitch()
-    {
-        if (Plugin.Instance.IsANotePlaying)
-        {
-            Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Stopped playing");
-            Plugin.Instance.IsANotePlaying = false;
-            Plugin.Instance.CurrentNote = ScaleHelper.DEFAULT_NOTE;
-            Plugin.Instance.CurrentRawNote = ScaleHelper.DEFAULT_RAW_NOTE;
-            Plugin.Instance.CurrentOctave = ScaleHelper.DEFAULT_OCTAVE;
-            Plugin.Instance.CurrentSemitoneModifier = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
-        }
-        
-    }
-
-    public static void SetOctave(OctaveEnum newOctave)
-    {
-        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set octave: {newOctave.ToString()}");
-        if (Plugin.Instance.CurrentOctave != newOctave)
-        {
-            Plugin.Instance.CurrentOctave = newOctave;
-        }
-    }
-
-    public static void SetSemitoneModifier(SemitoneModifierEnum newModifier)
-    {
-        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set semitone: {newModifier.ToString()}");
-
-        if (Plugin.Instance.CurrentSemitoneModifier != newModifier)
-        {
-            Plugin.Instance.CurrentSemitoneModifier = newModifier;
-        }
-    }
-
-    public static void SetRawNote(RawNoteInputEnum newNote)
-    {
-        if (Plugin.Instance.CurrentRawNote != newNote)
-        {
-            Plugin.Instance.CurrentRawNote = newNote;
-        }
-
-        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {Plugin.Instance.CurrentNote.ToString()}");
-    }
-
-    private static void SetNote(ScaleEnum newNote)
-    {
-        if (Plugin.Instance.CurrentNote != newNote)
-        {
-            Plugin.Instance.CurrentNote = newNote;
-        }
-
-        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {Plugin.Instance.CurrentNote.ToString()}");
-    }
-
-    public static void Toot(ScaleEnum newNote)
-    {
-        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Toot Note: {newNote.ToString()}, Octave: {Plugin.Instance.CurrentOctave} and Semitone: {Plugin.Instance.CurrentSemitoneModifier}");
-
-        // todo - TOOT
-        SetNote(newNote);
-    }
-
-    public static void RecalculateAndSetCurrentNote()
+    public static ScaleEnum CalculateScaleNote(RawNoteInputEnum rawInput, OctaveEnum octaveInput, SemitoneModifierEnum semitoneInput)
     {
         // Get base note input:
-        ScaleEnum noteAdjustedForOctave = ScaleHelper.GetScaleEnumFromAttributes(Plugin.Instance.CurrentRawNote, Plugin.Instance.CurrentOctave);
+        ScaleEnum noteAdjustedForOctave = GetScaleEnumFromAttributes(rawInput, octaveInput);
 
         // Check Semitone:
-        if (Plugin.Instance.CurrentSemitoneModifier == SemitoneModifierEnum.Natural)
+        if (semitoneInput == SemitoneModifierEnum.Natural)
         {
-            SetNote(noteAdjustedForOctave); // no modifications
-            return;
+            return noteAdjustedForOctave; // no modifications
         }
-        else if (Plugin.Instance.CurrentSemitoneModifier == SemitoneModifierEnum.Flat)
+        else if (semitoneInput == SemitoneModifierEnum.Flat)
         {
             // If already the lowest note, just return the lowest note;   
-            if (noteAdjustedForOctave == ScaleHelper.LOWEST_NOTE)
+            if (noteAdjustedForOctave == LOWEST_NOTE)
             {
-                SetNote(ScaleHelper.LOWEST_NOTE);
-                return;
+                return LOWEST_NOTE;
             }
             else
             {
                 // Apply Semitone modifier:
                 int modifiedNoteAsInteger = (int)noteAdjustedForOctave - 1;
-                SetNote((ScaleEnum)modifiedNoteAsInteger);
-                return;
+                return (ScaleEnum)modifiedNoteAsInteger;
             }
         }
-        else if (Plugin.Instance.CurrentSemitoneModifier == SemitoneModifierEnum.Sharp)
+        else if (semitoneInput == SemitoneModifierEnum.Sharp)
         {
             // If already the highest note, just return the highest note;   
-            if (noteAdjustedForOctave == ScaleHelper.HIGHEST_NOTE)
+            if (noteAdjustedForOctave == HIGHEST_NOTE)
             {
-                SetNote(ScaleHelper.HIGHEST_NOTE);
-                return;
+                return HIGHEST_NOTE;
             }
             else
             {
                 // Apply Semitone modifier:
                 int modifiedNoteAsInteger = (int)noteAdjustedForOctave + 1;
-                SetNote((ScaleEnum)modifiedNoteAsInteger);
-                return;
+                return (ScaleEnum)modifiedNoteAsInteger;
             }
         }
         else
         {
             // No match found
-            Plugin.Log.LogError($"{Plugin.LOG_PREFIX}: Could not find scale enum for RawNoteInputEnum {Plugin.Instance.CurrentRawNote} and Semitone Modifier {Plugin.Instance.CurrentSemitoneModifier} and Octave {Plugin.Instance.CurrentOctave}.");
-            SetNote(DEFAULT_NOTE);
-            return;
+            Plugin.Log.LogError($"{Plugin.LOG_PREFIX}: Could not find scale enum for RawNoteInputEnum {rawInput} and Semitone Modifier {semitoneInput} and Octave {octaveInput}.");
+            return DEFAULT_NOTE;
         }
     }
 
@@ -150,7 +83,7 @@ public class ScaleHelper
 
 public enum RawNoteInputEnum
 {
-    C,
+    C = 0,
     D,
     E,
     F,

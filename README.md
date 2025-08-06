@@ -7,17 +7,36 @@
 
 ## Description
 
-Play the bugle 📯 using your keyboard keys.
+Play the bugle 📯 using your keyboard keys. Multiplayer-friendly! Access three octaves & all the semitones inbetween.
 
 ## Intructions
 
-// todo
+You no longer need to click your mouse to blow the Bugle. Instead, tap your Z ---> M keys on your keyboard.
+
+SCALE:
+*CDEFGAB* notes are represented on your typical QWERTY keyboard as Z ---> M
+
+OCTAVES:
+You can go up or down octaves by holding the UP ARROW or DOWN ARROW keys, respectively.
+
+SEMITONES:
+You can sharpen or flatten notes by holding the RIGHT ARROW or LEFT ARROW keys, respectively.
 
 Currently keyboard-only (no controller support).
 
+Because this mod uses the arrow keys, I've disabled their typical use for walking. You'll need to run around in-game used WASD instead.
+
+### Are there any other ways I can play the Bugle? What about mod compatibility?
+
+Absolutely! If you'd like to play the bugle like a real chambered brass instrument, please checkout *Virtuoso* (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
+
+Unfortunately in-game, you can only choose one way to play your Bugle at a time.
+Make sure all players either enable *Bugle Maestro* or *Virtuoso* for their players. Whichever mod you decide not to use, ensure all players have it disabled.
+
+This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
+
 ### Are there any other ways I can play the Bugle?
 
-Absolutely! If you'd like to play the bugle like a real chambered brass instrument, please checkout Virtuoso (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
 
 ### Changelog
 
@@ -57,6 +76,7 @@ None. Please report any bugs to the Github page or in the Peak Modding Discord.
 
 - Add instructions for Bugle controls in-game by displaying instructions onscreen using the UI.
 - Add controller support
+- Allow users to change the key-binding for this mod
 
 # Can I copy this mod's code? Can I contribute to this project?
 
