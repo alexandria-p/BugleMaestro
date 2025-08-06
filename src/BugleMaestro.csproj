@@ -24,6 +24,8 @@
 		</Reference>
 		<Reference Include="$(PeakGameDirectory)\PEAK_Data\Managed\PhotonUnityNetworking.dll" Private="false">
 		</Reference>
+		<Reference Include="$(PeakGameDirectory)\PEAK_Data\Managed\PhotonRealtime.dll" Private="false">
+		</Reference>
 	</ItemGroup>
 	
   <!--
