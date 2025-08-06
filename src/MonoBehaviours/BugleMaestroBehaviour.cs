@@ -41,7 +41,7 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
             CurrentNote = newNote;
         }
 
-        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {Plugin.Instance.CurrentNote.ToString()}");
+        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {CurrentNote.ToString()}");
     }
 
     
