@@ -35,8 +35,6 @@ Make sure all players either enable *Bugle Maestro* or *Virtuoso* for their play
 
 This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
 
-### Are there any other ways I can play the Bugle?
-
 
 ### Changelog
 
@@ -75,8 +73,10 @@ None. Please report any bugs to the Github page or in the Peak Modding Discord.
 # Future planned features
 
 - Add instructions for Bugle controls in-game by displaying instructions onscreen using the UI.
+- Display the currently-played note onscreen for the local player
 - Add controller support
 - Allow users to change the key-binding for this mod
+- Integration with *Virtuoso*
 
 # Can I copy this mod's code? Can I contribute to this project?
 
