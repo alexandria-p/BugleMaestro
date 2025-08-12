@@ -1,4 +1,3 @@
-using BugleMaestro;
 using BugleMaestro.Helpers;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,43 +7,86 @@ using Photon.Pun;
 namespace BugleMaestro.MonoBehaviors;
 
 
-
+// remember - this monobehaviour will be added to the bugle gameobject
 internal class BugleMaestroBehaviour : MonoBehaviourPun
 {
     private static Item? _bugleItemInstance;
 
-    // todo - sync these variables over RPC
-    public ScaleEnum CurrentNote { get; set; } = ScaleHelper.DEFAULT_NOTE;
-    public bool IsANotePlaying { get; set; } = false;
+    // Sync these variables over RPC
+    // so if these variables are synced over RPC,
+    // they will be correct for each bugle on every client
+    public ScaleEnum RPC_CurrentNote { get; private set; } = ScaleHelper.DEFAULT_NOTE;
+    public bool RPC_IsANoteInputBeingPressedByThePlayer { get; private set; } = false;
+    public bool IsANewNoteChangePendingForLocalPlayer { get; private set; } = false; // changes to TRUE to trigger changes on every client, which will change the local value back to FALSE once complete on their client.
 
-    // all set locally
-    public RawNoteInputEnum CurrentRawNote { get; set; } = ScaleHelper.DEFAULT_RAW_NOTE;
-    private OctaveEnum CurrentOctave { get; set; } = ScaleHelper.DEFAULT_OCTAVE;
-    private SemitoneModifierEnum CurrentSemitoneModifier { get; set; } = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
+    // all tracked locally
+    public RawNoteInputEnum Local_CurrentRawNote { get; set; } = ScaleHelper.DEFAULT_RAW_NOTE;
+    private OctaveEnum Local_CurrentOctave { get; set; } = ScaleHelper.DEFAULT_OCTAVE;
+    private SemitoneModifierEnum Local_CurrentSemitoneModifier { get; set; } = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
     
     // Track inputs
-    private HashSet<OctaveEnum> LastFrameOctaveInput { get; set; } = new HashSet<OctaveEnum>();
-    private HashSet<SemitoneModifierEnum> LastFrameSemitoneInput { get; set; } = new HashSet<SemitoneModifierEnum>();
-    private List<RawNoteInputEnum> LastFrameRawNoteInput { get; set; } = new List<RawNoteInputEnum>(); // list to preserve insertion order
+    private HashSet<OctaveEnum> Local_LastFrameOctaveInput { get; set; } = new HashSet<OctaveEnum>();
+    private HashSet<SemitoneModifierEnum> Local_LastFrameSemitoneInput { get; set; } = new HashSet<SemitoneModifierEnum>();
+    private List<RawNoteInputEnum> Local_LastFrameRawNoteInput { get; set; } = new List<RawNoteInputEnum>(); // list to preserve insertion order
 
 
-    // this is the one we care about syncing over punRPC!
-    private void SetNote(ScaleEnum newNote)
+    private void LocalPlayerSetsNote(ScaleEnum newNote)
     {
         if (!photonView.IsMine)
         {
             return;
         }
-        
-        if (CurrentNote != newNote)
-        {
-            CurrentNote = newNote;
-        }
 
-        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {CurrentNote.ToString()}");
+        // triggers the below method to play out on every client
+        photonView.RPC(nameof(RPC_UpdateNotePlaying), RpcTarget.All, newNote);
     }
 
-    
+    [PunRPC] // updates these details on every client
+    private void RPC_UpdateNotePlaying(ScaleEnum newNote)
+    {
+        if (!RPC_IsANoteInputBeingPressedByThePlayer || RPC_CurrentNote != newNote)
+        {
+            RPC_CurrentNote = newNote;
+            IsANewNoteChangePendingForLocalPlayer = true;
+        }
+
+        RPC_IsANoteInputBeingPressedByThePlayer = true;
+
+        var playerName = _bugleItemInstance?.holderCharacter?.characterName ?? Plugin.DEFAULT_CHARACTER_NAME;
+        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX} (To everyone): {playerName} Set Note: {RPC_CurrentNote.ToString()}");
+    }
+
+    private void LocalStopInput()
+    {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        var playerName = _bugleItemInstance?.holderCharacter?.characterName ?? Plugin.DEFAULT_CHARACTER_NAME;
+
+        // triggers the below method to play out on every client
+        photonView.RPC(nameof(RPC_StopNotePlaying), RpcTarget.All);
+    }
+
+    [PunRPC] // updates these details on every client
+    private void RPC_StopNotePlaying()
+    {
+        if (RPC_IsANoteInputBeingPressedByThePlayer)
+        {
+            var playerName = _bugleItemInstance?.holderCharacter?.characterName ?? Plugin.DEFAULT_CHARACTER_NAME;
+            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX} (To everyone): {playerName} Stopped playing their bugle");
+            IsANewNoteChangePendingForLocalPlayer = false;
+            ResetToDefaultPitch();
+            RPC_CurrentNote = ScaleHelper.DEFAULT_NOTE;
+            RPC_IsANoteInputBeingPressedByThePlayer = false;
+        }
+    }
+
+    public void UpdateLocalIsNotePending(bool newValue)
+    {
+        IsANewNoteChangePendingForLocalPlayer = newValue;
+    }
 
     private void Awake()
     {
@@ -52,8 +94,6 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
         _bugleItemInstance = gameObject.GetComponent<BugleSFX>()?.item;
 
         Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: BugleMaestroBehaviour Awake");
-
-        //GlobalEvents.OnBugleTooted = (Action<Item>)Delegate.Combine(GlobalEvents.OnBugleTooted, new Action<Item>(TestBugleTooted));
     }
 
     private void Update()
@@ -75,7 +115,7 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
             return;
         }
 
-        // Now, the local player is the one actively holding the bugle in their hands.
+        // Now, the LOCAL PLAYER is the one actively holding the bugle in their hands.
 
 
         
@@ -158,17 +198,15 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
             && !Input.GetKey(KeyCode.N)
             && !Input.GetKey(KeyCode.M))
         {
-            StopPlaying();
+            LocalStopInput();
         }
 
         RawNoteInputEnum? newTootRawNote = FindNewTootRawNote();
         if (newTootRawNote != null)
         {
-            IsANotePlaying = true;
             SetRawNote(newTootRawNote.Value);
-            var result = ScaleHelper.CalculateScaleNote(CurrentRawNote, CurrentOctave, CurrentSemitoneModifier);
-            SetNote(result);
-            //Toot(CurrentNote);
+            var noteOnScale = ScaleHelper.CalculateScaleNote(Local_CurrentRawNote, Local_CurrentOctave, Local_CurrentSemitoneModifier);
+            LocalPlayerSetsNote(noteOnScale);
         }
 
         // don't update key tracking until after calculations.
@@ -176,22 +214,22 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
 
         void UpdateKeyInputTracking()
         {
-            LastFrameOctaveInput.RemoveWhere(_ => !octavesBeingPressedThisFrame.Contains(_));
-            LastFrameSemitoneInput.RemoveWhere(_ => !semitonesBeingPressedThisFrame.Contains(_));
-            LastFrameRawNoteInput.RemoveAll(_ => !rawNotesBeingPressedThisFrame.Contains(_));
+            Local_LastFrameOctaveInput.RemoveWhere(_ => !octavesBeingPressedThisFrame.Contains(_));
+            Local_LastFrameSemitoneInput.RemoveWhere(_ => !semitonesBeingPressedThisFrame.Contains(_));
+            Local_LastFrameRawNoteInput.RemoveAll(_ => !rawNotesBeingPressedThisFrame.Contains(_));
 
             // no need to do an 'if' check before adding, as hashset are unique elements.
             foreach (var keypress in octavesBeingPressedThisFrame)
-                LastFrameOctaveInput.Add(keypress);
+                Local_LastFrameOctaveInput.Add(keypress);
 
             foreach (var keypress in semitonesBeingPressedThisFrame)
-                LastFrameSemitoneInput.Add(keypress);
+                Local_LastFrameSemitoneInput.Add(keypress);
 
             foreach (var keypress in rawNotesBeingPressedThisFrame)
             {
-                if (!LastFrameRawNoteInput.Contains(keypress)) // cause this is a list to preserve insertion order
+                if (!Local_LastFrameRawNoteInput.Contains(keypress)) // cause this is a list to preserve insertion order
                 {
-                    LastFrameRawNoteInput.Add(keypress);
+                    Local_LastFrameRawNoteInput.Add(keypress);
                 }
             }
         }
@@ -206,8 +244,8 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
             foreach (var rawNote in rawNotesBeingPressedThisFrame)
             {
                 // early exit from foreach loop if you find a valid new note to TOOT.
-                if (!IsANotePlaying ||
-                    !LastFrameRawNoteInput.Contains(rawNote))
+                if (!RPC_IsANoteInputBeingPressedByThePlayer ||
+                    !Local_LastFrameRawNoteInput.Contains(rawNote))
                 // always play a note if there were none last frame, and now there is on this frame:
                 // OR always play the note if this is a new rawnote keypress (was not held last frame)
                 {
@@ -218,22 +256,22 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
             // if we are still here, then we didn't find any new raw keypresses to play.
             // so let's see if there was an octave or semitone change this frame, that necessitates a new note.
 
-            if (LastFrameOctaveInput.SetEquals(octavesBeingPressedThisFrame)
-                && LastFrameSemitoneInput.SetEquals(semitonesBeingPressedThisFrame)
+            if (Local_LastFrameOctaveInput.SetEquals(octavesBeingPressedThisFrame)
+                && Local_LastFrameSemitoneInput.SetEquals(semitonesBeingPressedThisFrame)
                 )
             {
                 // potentially - the octave/semitone is the same but user releases one of multiple keys
                 // so lets recalculate notes.
                 // early exit with no change if the note sustained last frame is still being held:
-                if (rawNotesBeingPressedThisFrame.Contains(CurrentRawNote))
+                if (rawNotesBeingPressedThisFrame.Contains(Local_CurrentRawNote))
                 {
                     return null; // early exit with no new note.
                 }
 
                 // (otherwise....notes are added to the LastFrameRawNoteInput list in the order they were pressed ("lists preserve insertion order"). Let's go back to the most recent press.)
-                for (var i = (LastFrameRawNoteInput.Count) - (1); i >= 0; i--)
+                for (var i = (Local_LastFrameRawNoteInput.Count) - (1); i >= 0; i--)
                 {
-                    var key = LastFrameRawNoteInput[i];
+                    var key = Local_LastFrameRawNoteInput[i];
                     if (rawNotesBeingPressedThisFrame.Contains(key))
                     {
                         return key;
@@ -246,15 +284,15 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
                 // else - there has been a change in octave or semitone. 
                 // so lets recalculate notes.
                 // let's try to use the note sustained last frame, if it is still being held:
-                if (rawNotesBeingPressedThisFrame.Contains(CurrentRawNote))
+                if (rawNotesBeingPressedThisFrame.Contains(Local_CurrentRawNote))
                 {
-                    return CurrentRawNote;
+                    return Local_CurrentRawNote;
                 }
 
                 // (otherwise....notes are added to the LastFrameRawNoteInput list in the order they were pressed ("lists preserve insertion order"). Let's go back to the most recent press.)
-                for (var i = (LastFrameRawNoteInput.Count) - (1); i >= 0; i--)
+                for (var i = (Local_LastFrameRawNoteInput.Count) - (1); i >= 0; i--)
                 {
-                    var key = LastFrameRawNoteInput[i];
+                    var key = Local_LastFrameRawNoteInput[i];
                     if (rawNotesBeingPressedThisFrame.Contains(key))
                     {
                         return key;
@@ -266,31 +304,13 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
             return null;
         }
     }
-
-    private void StopPlaying()
-    {
-        if (IsANotePlaying)
-        {
-            Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Stopped playing");
-            IsANotePlaying = false;
-            ResetToDefaultPitch();
-        }
-    }
-
-    private void ResetToDefaultPitch()
-    {
-        CurrentNote = ScaleHelper.DEFAULT_NOTE;
-        CurrentRawNote = ScaleHelper.DEFAULT_RAW_NOTE;
-        CurrentOctave = ScaleHelper.DEFAULT_OCTAVE;
-        CurrentSemitoneModifier = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
-    }
-
+    
     private void SetOctave(OctaveEnum newOctave)
     {
         //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set octave: {newOctave.ToString()}");
-        if (CurrentOctave != newOctave)
+        if (Local_CurrentOctave != newOctave)
         {
-            CurrentOctave = newOctave;
+            Local_CurrentOctave = newOctave;
         }
     }
 
@@ -298,19 +318,26 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
     {
         //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set semitone: {newModifier.ToString()}");
 
-        if (CurrentSemitoneModifier != newModifier)
+        if (Local_CurrentSemitoneModifier != newModifier)
         {
-            CurrentSemitoneModifier = newModifier;
+            Local_CurrentSemitoneModifier = newModifier;
         }
     }
 
     private void SetRawNote(RawNoteInputEnum newNote)
     {
-        if (CurrentRawNote != newNote)
+        if (Local_CurrentRawNote != newNote)
         {
-            CurrentRawNote = newNote;
+            Local_CurrentRawNote = newNote;
         }
 
         //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Set Note: {Plugin.Instance.CurrentNote.ToString()}");
+    }
+
+    private void ResetToDefaultPitch()
+    {
+        Local_CurrentRawNote = ScaleHelper.DEFAULT_RAW_NOTE;
+        Local_CurrentOctave = ScaleHelper.DEFAULT_OCTAVE;
+        Local_CurrentSemitoneModifier = ScaleHelper.DEFAULT_SEMITONE_MODIFIER;
     }
 }

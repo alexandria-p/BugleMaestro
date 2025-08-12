@@ -101,3 +101,6 @@ Scaffolded using Hamunii's template: https://github.com/PEAKModding/BepInExTempl
 This template uses Harmony.
 
 Notes about modding are included in a text file in root of the project GitHub.
+
+# Acknowledgements
+Thank you to Mondash (https://github.com/mondash) for teaching me about note frequencies and for our great chats. I am extremely grateful to you and look forward to working together with you again in the future 🤝

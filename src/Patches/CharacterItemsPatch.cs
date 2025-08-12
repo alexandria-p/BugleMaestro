@@ -1,11 +1,5 @@
 using HarmonyLib;
 using BugleMaestro.MonoBehaviors;
-using Photon.Pun;
-using Photon.Realtime;
-using System;
-using BugleMaestro.Helpers;
-using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 
 namespace BugleMaestro.Patches;
@@ -13,14 +7,22 @@ namespace BugleMaestro.Patches;
 [HarmonyPatch(typeof(CharacterItems))]
 public class CharacterItemsPatch
 {
-
-
     [HarmonyPatch(nameof(CharacterItems.DoUsing))]
     [HarmonyPrefix]
     private static bool DoUsing_Prefix(ref CharacterItems __instance)
     {
-        if (__instance.character == null || __instance.character.data.currentItem == null)
+        if (__instance == null)
         {
+            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: instance is null");
+
+            //  continue as normal
+            return true;
+        }
+
+        if (__instance.character == null || __instance.character.data == null || __instance.character.data.currentItem == null)
+        {
+            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: character null={__instance.character == null}, characterData null={__instance.character?.data == null}, currentItem null={__instance.character?.data?.currentItem == null}");
+
             //  continue as normal
             return true;
         }
@@ -42,29 +44,50 @@ public class CharacterItemsPatch
         // if we get here, then 
         // - character is holding the bugle and is able to play it
 
-        bool flag = buglemb.IsANotePlaying;
-        if (flag)
+       
+        bool isNoteInputHeldByUser = buglemb.RPC_IsANoteInputBeingPressedByThePlayer;
+        bool bugleItemIsInUse = buglesfx.item.isUsingPrimary;  // - detect HOLD
+
+        // handle changing notes? (stop, then start)
+        if (buglemb.IsANewNoteChangePendingForLocalPlayer && bugleItemIsInUse)
         {
-            if (buglesfx.item.holderCharacter.data.currentItem.CanUsePrimary())
+            CancelBugle(); // stop, so that a new note can start.
+        }
+
+        
+        if (isNoteInputHeldByUser)
+        {
+            if (!bugleItemIsInUse && buglesfx.item.holderCharacter.data.currentItem.CanUsePrimary())
             {
-                buglesfx.item.StartUsePrimary();
+                //character.input.usePrimaryIsPressed
+                StartBugle();
                 return false;
             }
-            if (buglesfx.item.holderCharacter.data.currentItem.CanUsePrimary())
+            if (bugleItemIsInUse && buglesfx.item.holderCharacter.data.currentItem.CanUsePrimary())
             {
-                buglesfx.item.ContinueUsePrimary();
+                ContinueBugle();
                 return false;
             }
         }
-        else
+        else if (!isNoteInputHeldByUser && bugleItemIsInUse) // else, user was blowing the bugle last frame but is no longer holding a note, so cancel its user.
         {
-            buglesfx.item.CancelUsePrimary();
+            CancelBugle();
             return false;
         }
-        // todo - handle changing notes? (stop, then start)
 
-
+        // fall-through to the regular method
         return true;
+
+        void StartBugle()
+        {
+            buglesfx.item.StartUsePrimary();
+            buglemb.UpdateLocalIsNotePending(false);
+        }
+
+        void ContinueBugle()
+        {
+            buglesfx.item.ContinueUsePrimary();
+        }
 
         void CancelBugle()
         {

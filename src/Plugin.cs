@@ -2,8 +2,6 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using BugleMaestro.Patches;
-using BugleMaestro.Helpers;
-using BugleMaestro.MonoBehaviors;
 
 namespace BugleMaestro;
 
@@ -16,6 +14,7 @@ public partial class Plugin : BaseUnityPlugin
     internal static ManualLogSource Log { get; private set; } = null!;
     private Harmony? _harmonyInstance;
     public readonly static string LOG_PREFIX = "BugleMaestro";
+    public readonly static string DEFAULT_CHARACTER_NAME = "DEFAULT_NAME";
     
     private void Awake()
     {
