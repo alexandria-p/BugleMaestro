@@ -1,5 +1,6 @@
 using HarmonyLib;
 using BugleMaestro.MonoBehaviors;
+using BugleMaestro.Helpers;
 
 
 namespace BugleMaestro.Patches;
@@ -80,6 +81,13 @@ public class CharacterItemsPatch
 
         void StartBugle()
         {
+            // If local player is the Maestro, display UI
+            if (buglesfx.item.holderCharacter.IsLocal)
+            {
+                UIHelper.DisplayBugleNote(buglemb.RPC_CurrentNote);
+            }
+            
+            // Trigger Bugle start
             buglesfx.item.StartUsePrimary();
             buglemb.UpdateLocalIsNotePending(false);
         }
@@ -91,6 +99,12 @@ public class CharacterItemsPatch
 
         void CancelBugle()
         {
+            // If local player is the Maestro, hide UI
+            if (buglesfx.item.holderCharacter.IsLocal)
+            {
+                UIHelper.HideUI();
+            }
+            
             buglesfx.item.CancelUsePrimary();
         }
     }
