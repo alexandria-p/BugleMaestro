@@ -13,19 +13,18 @@ namespace BugleMaestro.Patches;
 [HarmonyPatch(typeof(BugleSFX))]
 public class BugleSFXPatch
 {
-    // BugleSFX.hold == holding note.
 
     // 1. todo - override movement while playing? (arrow keys)
 
 
     // From Virtuoso [mondash] - Mark as already tooting so audio isn't overwritten in Update
-
+    /*
     private static void SetTooting(BugleSFX instance) =>
         instance
             .GetType()
             .GetField("t", BindingFlags.Instance | BindingFlags.NonPublic)
             ?.SetValue(instance, true);
-
+    */
 
 
     [HarmonyPatch(nameof(BugleSFX.RPC_StartToot))]
@@ -37,7 +36,11 @@ public class BugleSFXPatch
 
         // Set clip
         var mb = __instance.item.gameObject.GetComponent<BugleMaestroBehaviour>();
-        __instance.buglePlayer.clip = ClipHelper.RandomClip(mb.RPC_CurrentNote);
+
+        __instance.bugle = [ClipHelper.RandomClip(mb.RPC_CurrentNote)]; // todo - pass in volume??
+
+        __instance.currentClip = 0; // there is only one clip we want to play
+        __instance.currentPitch = 1f;// pitch;
 
 
         // regular code: TODO - can I just let this play out as usual instead??

@@ -8,10 +8,10 @@ namespace BugleMaestro.Helpers;
 // From https://thunderstore.io/c/peak/p/jkqt/ItemInfoDisplay/
 public class UIHelper
 {
-    public readonly static float DEFAULT_FONTSIZE = 20f;
+    public readonly static float DEFAULT_FONTSIZE = 30f; //20f;
     public readonly static float DEFAULT_OUTLINEWIDTH = 0.08f;
     public readonly static float DEFAULT_LINESPACING = -35f;
-    public readonly static float DEFAULT_SIZEDELTAX = 550f;
+    public readonly static float DEFAULT_SIZEDELTAX = 650f;
 
     public static void AddDisplayObject()
     {
@@ -19,16 +19,36 @@ public class UIHelper
         Plugin.Instance.guiManager = guiManagerGameObj.GetComponent<GUIManager>();
         TMPro.TMP_FontAsset font = Plugin.Instance.guiManager.heroDayText.font;
 
-        GameObject invGameObj = guiManagerGameObj.transform.Find("Canvas_HUD/Prompts/ItemPromptLayout").gameObject;
-        GameObject itemInfoDisplayGameObj = new GameObject("BugleMaestroDisplay");
-        itemInfoDisplayGameObj.transform.SetParent(invGameObj.transform);
-        Plugin.Instance.itemInfoDisplayTextMesh = itemInfoDisplayGameObj.AddComponent<TextMeshProUGUI>();
-        RectTransform itemInfoDisplayRect = itemInfoDisplayGameObj.GetComponent<RectTransform>();
+        // Let's try and position ourselves above the ItemPromptLayout.
+        GameObject itemPromptGameObj = guiManagerGameObj.transform.Find("Canvas_HUD/Prompts/ItemPromptLayout").gameObject;
 
-        itemInfoDisplayRect.sizeDelta = new Vector2(Plugin.Instance.sizeDeltaX, 0f); // Y is 0, otherwise moves other item prompts     // configSizeDeltaX.Value
+        // create our display, add a TextMeshProUGUI & set its transform as a child to itemPrompt
+        GameObject bugleUIGameObj = new GameObject("BugleMaestroDisplay");
+        bugleUIGameObj.transform.SetParent(itemPromptGameObj.transform);
+
+        // setup TMP and rectTransform
+        Plugin.Instance.itemInfoDisplayTextMesh = bugleUIGameObj.AddComponent<TextMeshProUGUI>();
+        RectTransform itemInfoDisplayRect = Plugin.Instance.itemInfoDisplayTextMesh.rectTransform;
+
+        // THIS DID NOT WORK
+        // Match anchors to the parent (centered top)
+        itemInfoDisplayRect.anchorMin = new Vector2(0.5f, 1f);
+        itemInfoDisplayRect.anchorMax = new Vector2(0.5f, 1f);
+        itemInfoDisplayRect.pivot = new Vector2(0.5f, 0f); // pivot bottom center
+
+        // Offset from the parent's top center
+        itemInfoDisplayRect.anchoredPosition = new Vector2(0f, 500f); // 20 units above
+
+
+        //Plugin.Instance.itemInfoDisplayTextMesh.gameObject.transform.localPosition = 
+
+        // width
+        itemInfoDisplayRect.sizeDelta = new Vector2(Plugin.Instance.sizeDeltaX, 0f); // y offsets EVERYTHING in this transform
+
+        // Set font options
         Plugin.Instance.itemInfoDisplayTextMesh.font = font;
         Plugin.Instance.itemInfoDisplayTextMesh.fontSize = Plugin.Instance.fontSize; // configFontSize.Value
-        Plugin.Instance.itemInfoDisplayTextMesh.alignment = TextAlignmentOptions.BottomLeft;
+        Plugin.Instance.itemInfoDisplayTextMesh.alignment = TextAlignmentOptions.TopRight;
         Plugin.Instance.itemInfoDisplayTextMesh.lineSpacing = Plugin.Instance.lineSpacing; // configLineSpacing.Value
         Plugin.Instance.itemInfoDisplayTextMesh.text = "";
         Plugin.Instance.itemInfoDisplayTextMesh.outlineWidth = Plugin.Instance.outlineWidth; // configOutlineWidth.Value
@@ -52,7 +72,7 @@ public class UIHelper
 
     public static void InitEffectColors(Dictionary<string, string> dict)
     {
-        dict.Add("Note", "<#A65A1C>");
+        dict.Add("Note", "<#FFBD16>"); // same color as Hunger (yellow)
     }
 
     public static void DisplayBugleNote(ScaleEnum note)
