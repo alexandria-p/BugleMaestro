@@ -11,10 +11,11 @@ Play the bugle 📯 using your keyboard keys. Multiplayer-friendly! Access three
 
 ## Intructions
 
-You no longer need to click your mouse to blow the Bugle. Instead, tap your Z ---> M keys on your keyboard.
+You no longer need to click your mouse to blow the Bugle. Instead, tap the bottom row of keys on your keyboard.
 
 SCALE:
-*CDEFGAB* notes are represented on your typical QWERTY keyboard as Z ---> M
+*CDEFGAB* notes are represented on your typical QWERTY keyboard
+<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/bugle_instructions.jpg" width="1000"/></p>
 
 OCTAVES:
 You can go up or down octaves by holding the UP ARROW or DOWN ARROW keys, respectively.
@@ -30,11 +31,10 @@ Because this mod uses the arrow keys, I've disabled their typical use for walkin
 
 Absolutely! If you'd like to play the bugle like a real chambered brass instrument, please checkout *Virtuoso* (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
 
-Unfortunately in-game, you can only choose one way to play your Bugle at a time.
-Make sure all players either enable *Bugle Maestro* or *Virtuoso* for their players. Whichever mod you decide not to use, ensure all players have it disabled.
+* Unfortunately in-game, you can only choose one way to play your Bugle at a time - ensure all players either enable *Bugle Maestro* or *Virtuoso* for their players. 
+* *Whichever mod you decide not to use, make sure all players have it disabled.
 
 This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
-
 
 ### Changelog
 
@@ -72,11 +72,10 @@ None. Please report any bugs to the Github page or in the Peak Modding Discord.
 
 # Future planned features
 
-- Add instructions for Bugle controls in-game by displaying instructions onscreen using the UI.
-- Display the currently-played note onscreen for the local player
 - Add controller support
 - Allow users to change the key-binding for this mod
 - Integration with *Virtuoso*
+- Add instructions for Bugle controls in-game by displaying instructions onscreen using the UI.
 
 # Can I copy this mod's code? Can I contribute to this project?
 
@@ -103,4 +102,5 @@ This template uses Harmony.
 Notes about modding are included in a text file in root of the project GitHub.
 
 # Acknowledgements
-Thank you to Mondash (https://github.com/mondash) for teaching me about note frequencies and for our great chats. I am extremely grateful to you and look forward to working together with you again in the future 🤝
+Thank you to Mondash (https://github.com/mondash) for teaching me about note frequencies and for our great chats. I look forward to working together with you again in the future 🤝
+ChatGPT used to figure out how to import mp3 files as Unity AudioClips, and to provide a base image for the instructional keybinding diagram that I modified to suit my purposes in Photoshop. Everything else made by me, with love, by humans for humans.
