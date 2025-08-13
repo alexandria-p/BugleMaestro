@@ -49,7 +49,7 @@ public class CharacterItemsPatch
         bool isNoteInputHeldByUser = buglemb.RPC_IsANoteInputBeingPressedByThePlayer;
         bool bugleItemIsInUse = buglesfx.item.isUsingPrimary;  // - detect HOLD
 
-        // handle changing notes? (stop, then start)
+        // handle changing notes (stop, then start)
         if (buglemb.IsANewNoteChangePendingForLocalPlayer && bugleItemIsInUse)
         {
             CancelBugle(); // stop, so that a new note can start.

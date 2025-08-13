@@ -3,9 +3,9 @@ using BepInEx.Logging;
 using HarmonyLib;
 using BugleMaestro.Patches;
 using BugleMaestro.Helpers;
-using BepInEx.Configuration;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BugleMaestro;
 
@@ -20,22 +20,18 @@ public partial class Plugin : BaseUnityPlugin
     public readonly static string LOG_PREFIX = "BugleMaestro";
     public readonly static string DEFAULT_CHARACTER_NAME = "DEFAULT_NAME";
 
+    // Audio
+    public Dictionary<ScaleEnum, AudioClip> baseBugleClips = new Dictionary<ScaleEnum, AudioClip>();
+
     // UI display
     public GUIManager guiManager;
     public TextMeshProUGUI itemInfoDisplayTextMesh;
     public Dictionary<string, string> fontColors = new Dictionary<string, string>();
-   
     // UI display configuration
     public float fontSize;
     public float outlineWidth;
     public float lineSpacing;
     public float sizeDeltaX;
-    /*
-    public ConfigEntry<float> configFontSize;
-    public ConfigEntry<float> configOutlineWidth;
-    public ConfigEntry<float> configLineSpacing;
-    public ConfigEntry<float> configSizeDeltaX;
-    */
 
     private void Awake()
     {
@@ -44,10 +40,11 @@ public partial class Plugin : BaseUnityPlugin
 
         // UI setup
         UIHelper.SetupUIElements();
+        ClipHelper.SetupBaseBugleClips();
 
         // Patch
         //_harmonyInstance = new Harmony(Info.Metadata.GUID).PatchAll(); // Info.Metadata.GUID // "com.github.PEAKModding.AlexModTest"
-        _harmonyInstance = Harmony.CreateAndPatchAll(typeof(BugleSFXPatch)); // works
+        _harmonyInstance = Harmony.CreateAndPatchAll(typeof(BugleSFXPatch));
         _harmonyInstance = Harmony.CreateAndPatchAll(typeof(CharacterItemsPatch));
         Log.LogInfo($"{LOG_PREFIX}: Plugin {Name} is loaded!");
     }
