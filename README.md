@@ -109,4 +109,5 @@ Notes about modding are included in a text file in root of the project GitHub.
 
 # Acknowledgements
 Thank you to Mondash (https://github.com/mondash) for teaching me about note frequencies and for our great chats. I look forward to working together with you again in the future 🤝
-ChatGPT used to figure out how to import mp3 files as Unity AudioClips, and to provide a base image for the instructional keybinding diagram that I modified to suit my purposes in Photoshop. Everything else made by me, with love, by humans for humans.
+
+ChatGPT used in one file (ClipHelper.cs -> CreateAudioClipFromMp3() and CreateNewAudioClipByPitchShifting()) to figure out how to import mp3 files as Unity AudioClips. Everything else made by me, with love, by humans for humans.
