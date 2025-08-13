@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using BepInEx;
+using System.IO;
 
 namespace BugleMaestro.Helpers;
 
@@ -36,7 +38,7 @@ public class ClipHelper
                 // if you are 6(or less) semitones away to the nearest mp3 audioclip, then lets say *that one* is the closest 'base clip' for us to use and pitch-shift.
                 baseClipToModify = item.Value;
                 numOfSemitoneDifferenceFromBaseClip = diff;
-                Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Pitch-shifting bugle clip {item.Key.ToString()} for target note {targetScaleNote.ToString()}");
+                //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Pitch-shifting bugle clip {item.Key.ToString()} for target note {targetScaleNote.ToString()}");
                 break;
             }
         }
@@ -80,10 +82,10 @@ public class ClipHelper
     public static async void SetupBaseBugleClips()
     {
         Dictionary<ScaleEnum, string> bugleClipFilepaths = new Dictionary<ScaleEnum, string>();
-        bugleClipFilepaths.Add(ScaleEnum.C2, "W:/mods/Peak/BugleMaestro/src/Assets/c2_bugle.mp3");
-        bugleClipFilepaths.Add(ScaleEnum.C3, "W:/mods/Peak/BugleMaestro/src/Assets/c3_bugle.mp3");
-        bugleClipFilepaths.Add(ScaleEnum.C4, "W:/mods/Peak/BugleMaestro/src/Assets/c4_bugle.mp3");
-        bugleClipFilepaths.Add(ScaleEnum.B4, "W:/mods/Peak/BugleMaestro/src/Assets/b4_bugle.mp3");
+        bugleClipFilepaths.Add(ScaleEnum.C2, "c2_bugle.mp3");
+        bugleClipFilepaths.Add(ScaleEnum.C3, "c3_bugle.mp3");
+        bugleClipFilepaths.Add(ScaleEnum.C4, "c4_bugle.mp3");
+        bugleClipFilepaths.Add(ScaleEnum.B4, "b4_bugle.mp3");
 
         foreach (var item in bugleClipFilepaths)
         {
@@ -92,8 +94,10 @@ public class ClipHelper
         }
     }
 
-    public static async Task<AudioClip> CreateAudioClipFromMp3(string mp3Path)
+    public static async Task<AudioClip> CreateAudioClipFromMp3(string filename)
     {
+        string mp3Path = Path.Combine(Paths.PluginPath, $"{Plugin.AUTHOR_NAME}-{Plugin.MOD_NAME}", filename);
+        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: {Paths.PluginPath}");
         string url = "file:///" + mp3Path;
 
         UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG);

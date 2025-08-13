@@ -14,7 +14,7 @@ Play the bugle 📯 using your keyboard keys. Multiplayer-friendly! Access three
 You no longer need to click your mouse to blow the Bugle. Instead, tap the bottom row of keys on your keyboard.
 
 SCALE:
-*CDEFGAB* notes are represented on your typical QWERTY keyboard
+Notes are represented on your typical QWERTY keyboard, by using the bottom-row of letters for input (as per instructions below).
 <p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/bugle_instructions.jpg" width="1000"/></p>
 
 OCTAVES:
@@ -26,6 +26,12 @@ You can sharpen or flatten notes by holding the RIGHT ARROW or LEFT ARROW keys, 
 Currently keyboard-only (no controller support).
 
 Because this mod uses the arrow keys, I've disabled their typical use for walking. You'll need to run around in-game used WASD instead.
+
+### What does this look like?
+
+Just like normal. When you are actively blowing a note on your bugle, the note you are playing will display on the bottom-right of the screen. (Other players will not be shown the note you are playing, they will just hear it out loud)
+<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/maestro_screenshot.jpg" width="1000"/></p>
+
 
 ### Are there any other ways I can play the Bugle? What about mod compatibility?
 
