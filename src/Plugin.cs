@@ -2,6 +2,10 @@
 using BepInEx.Logging;
 using HarmonyLib;
 using BugleMaestro.Patches;
+using BugleMaestro.Helpers;
+using BepInEx.Configuration;
+using TMPro;
+using System.Collections.Generic;
 
 namespace BugleMaestro;
 
@@ -15,33 +19,52 @@ public partial class Plugin : BaseUnityPlugin
     private Harmony? _harmonyInstance;
     public readonly static string LOG_PREFIX = "BugleMaestro";
     public readonly static string DEFAULT_CHARACTER_NAME = "DEFAULT_NAME";
-    
+
+    // UI display
+    public GUIManager guiManager;
+    public TextMeshProUGUI itemInfoDisplayTextMesh;
+    public Dictionary<string, string> fontColors = new Dictionary<string, string>();
+   
+    // UI display configuration
+    public float fontSize;
+    public float outlineWidth;
+    public float lineSpacing;
+    public float sizeDeltaX;
+    /*
+    public ConfigEntry<float> configFontSize;
+    public ConfigEntry<float> configOutlineWidth;
+    public ConfigEntry<float> configLineSpacing;
+    public ConfigEntry<float> configSizeDeltaX;
+    */
+
     private void Awake()
     {
         Instance = this;
         Log = Logger;
 
+        // UI setup
+        UIHelper.SetupUIElements();
 
+        // Patch
         //_harmonyInstance = new Harmony(Info.Metadata.GUID).PatchAll(); // Info.Metadata.GUID // "com.github.PEAKModding.AlexModTest"
         _harmonyInstance = Harmony.CreateAndPatchAll(typeof(BugleSFXPatch)); // works
         _harmonyInstance = Harmony.CreateAndPatchAll(typeof(CharacterItemsPatch));
         Log.LogInfo($"{LOG_PREFIX}: Plugin {Name} is loaded!");
     }
 
-
     private void OnDestroy()
     {
-        Log.LogInfo("{LOG_PREFIX}: Plugin destroying...");
-        Log.LogDebug("{LOG_PREFIX}: Removing harmony patches...");
-        // todo
+        Log.LogInfo($"{LOG_PREFIX}: Plugin destroying...");
+        Log.LogDebug($"{LOG_PREFIX}: Removing harmony patches...");
+        // todo - check this
         if ( _harmonyInstance != null )
         {
             _harmonyInstance!.UnpatchSelf();
         }
         else
         {
-            Log.LogInfo("{LOG_PREFIX}: null harmony instance OnDestroy");
+            Log.LogInfo($"{LOG_PREFIX}: null harmony instance OnDestroy");
         }
-        Log.LogInfo("{LOG_PREFIX}: Plugin destroyed!");
+        Log.LogInfo($"{LOG_PREFIX}: Plugin destroyed!");
     }
 }
