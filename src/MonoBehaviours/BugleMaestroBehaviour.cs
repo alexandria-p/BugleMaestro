@@ -15,6 +15,7 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
     // Sync these variables over RPC
     // so if these variables are synced over RPC,
     // they will be correct for each bugle on every client
+    public bool IsPlaying => RPC_IsANoteInputBeingPressedByThePlayer;
     public ScaleEnum RPC_CurrentNote { get; private set; } = ScaleHelper.DEFAULT_NOTE;
     public bool RPC_IsANoteInputBeingPressedByThePlayer { get; private set; } = false;
     public bool IsANewNoteChangePendingForLocalPlayer { get; private set; } = false; // changes to TRUE to trigger changes on every client, which will change the local value back to FALSE once complete on their client.
@@ -58,12 +59,10 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
 
     private void LocalStopInput()
     {
-        if (!photonView.IsMine)
+        if (!photonView.IsMine || !IsPlaying)
         {
             return;
         }
-
-        var playerName = _bugleItemInstance?.holderCharacter?.characterName ?? Plugin.DEFAULT_CHARACTER_NAME;
 
         // triggers the below method to play out on every client
         photonView.RPC(nameof(RPC_StopNotePlaying), RpcTarget.All);
@@ -72,15 +71,21 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
     [PunRPC] // updates these details on every client
     private void RPC_StopNotePlaying()
     {
-        if (RPC_IsANoteInputBeingPressedByThePlayer)
+        if (IsPlaying)
         {
-            var playerName = _bugleItemInstance?.holderCharacter?.characterName ?? Plugin.DEFAULT_CHARACTER_NAME;
+            //var playerName = _bugleItemInstance?.holderCharacter?.characterName ?? Plugin.DEFAULT_CHARACTER_NAME;
             //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX} (To everyone): {playerName} Stopped playing their bugle");
-            IsANewNoteChangePendingForLocalPlayer = false;
-            ResetToDefaultPitch();
-            RPC_CurrentNote = ScaleHelper.DEFAULT_NOTE;
-            RPC_IsANoteInputBeingPressedByThePlayer = false;
+            ResetBugleState();
         }
+    }
+
+    public void ResetBugleState()
+    {
+        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Reset bugle state");
+        IsANewNoteChangePendingForLocalPlayer = false;
+        ResetToDefaultPitch();
+        RPC_CurrentNote = ScaleHelper.DEFAULT_NOTE;
+        RPC_IsANoteInputBeingPressedByThePlayer = false;
     }
 
     public void UpdateLocalIsNotePending(bool newValue)
@@ -93,27 +98,42 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
         if (_bugleItemInstance) return;
         _bugleItemInstance = gameObject.GetComponent<BugleSFX>()?.item;
 
-        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: BugleMaestroBehaviour Awake");
+        //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: BugleMaestroBehaviour Awake");
     }
 
     private void Update()
     {
         if (_bugleItemInstance == null) 
         {
-            Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: null issue");
+            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: null issue");
             _bugleItemInstance = gameObject.GetComponent<BugleSFX>()?.item; // attempt to set bugle instance
             return;
-        };
-        if (_bugleItemInstance.holderCharacter == null || !_bugleItemInstance.holderCharacter.IsLocal)
-        {
-            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Bugle not being held by local player");
-            return;
         }
+
+        // Reset the bugle state if necessary (e.g. if dropped, or if item.CancelUsePrimary() was called)
+        // (then continue with the rest of the method)
+        if (!_bugleItemInstance.isUsingPrimary)
+        {
+            if (IsPlaying)
+            {
+                ResetBugleState();
+            }            
+        }
+
+        // early exit if the local player is not holding the bugle
         if (_bugleItemInstance.itemState != ItemState.Held)
         {
             //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Bugle not in player's hands");
             return;
         }
+        if (_bugleItemInstance.holderCharacter == null || !_bugleItemInstance.holderCharacter.IsLocal)
+        {
+            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Bugle not being held by local player");
+            return;
+        }
+
+        
+        
 
         // Now, the LOCAL PLAYER is the one actively holding the bugle in their hands.
 
@@ -199,6 +219,7 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
             && !Input.GetKey(KeyCode.M))
         {
             LocalStopInput();
+            return; // early exit.
         }
 
         RawNoteInputEnum? newTootRawNote = FindNewTootRawNote();

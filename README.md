@@ -15,7 +15,7 @@ You no longer need to click your mouse to blow the Bugle. Instead, tap the botto
 
 SCALE:
 Notes are represented on your typical QWERTY keyboard, by using the bottom-row of letters for input (as per instructions below).
-<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/bugle_instructions.jpg" width="1000"/></p>
+<p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/combined_bugle_instructions.png" width="1000"/></p>
 
 OCTAVES:
 You can go up or down octaves by holding the UP ARROW or DOWN ARROW keys, respectively.
@@ -24,8 +24,6 @@ SEMITONES:
 You can sharpen or flatten notes by holding the RIGHT ARROW or LEFT ARROW keys, respectively.
 
 Currently keyboard-only (no controller support).
-
-Because this mod uses the arrow keys, I've disabled their typical use for walking. You'll need to run around in-game used WASD instead.
 
 ### What does this look like?
 
@@ -37,8 +35,8 @@ Just like normal. When you are actively blowing a note on your bugle, the note y
 
 Absolutely! If you'd like to play the bugle like a real chambered brass instrument, please checkout *Virtuoso* (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
 
-* Unfortunately in-game, you can only choose one way to play your Bugle at a time - ensure all players either enable *Bugle Maestro* or *Virtuoso* for their players. 
-* *Whichever mod you decide not to use, make sure all players have it disabled.
+* Unfortunately, you can only choose one way to play your Bugle at a time - ensure all players either enable *Bugle Maestro* or *Virtuoso* for their players. 
+* *Whichever mod you decide **not** to use, make sure all players have it disabled.
 
 This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
 

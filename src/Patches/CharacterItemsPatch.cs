@@ -1,13 +1,39 @@
 using HarmonyLib;
 using BugleMaestro.MonoBehaviors;
 using BugleMaestro.Helpers;
-
+using UnityEngine;
 
 namespace BugleMaestro.Patches;
 
 [HarmonyPatch(typeof(CharacterItems))]
 public class CharacterItemsPatch
 {
+    [HarmonyPatch(nameof(CharacterItems.DropItemRpc))]
+    [HarmonyPrefix]
+    private static bool DropItemRpc_Prefix(ref CharacterItems __instance, float throwCharge, byte slotID, Vector3 spawnPos, Vector3 velocity, Quaternion rotation, ItemInstanceData itemInstanceData)
+    {
+        var currentItem = __instance.character.data.currentItem;
+        var buglemb = currentItem?.gameObject.GetComponent<BugleMaestroBehaviour>();
+        var buglesfx = currentItem?.gameObject.GetComponent<BugleSFX>();
+
+        // if not dropping bugle, continue
+        if (!currentItem || buglemb == null || buglesfx == null)
+        {
+            return true;
+        }
+
+        // If local player is the Maestro, hide UI
+        if (buglesfx.item.holderCharacter.IsLocal)
+        {
+            UIHelper.HideUI();
+        }
+
+        //  continue as normal
+        return true;
+    }
+
+
+    // The idea here is that we tap into the 'item.isUsingPrimary' functionality that is already happening, so that our mod has minimal impact on the game logic.
     [HarmonyPatch(nameof(CharacterItems.DoUsing))]
     [HarmonyPrefix]
     private static bool DoUsing_Prefix(ref CharacterItems __instance)
@@ -70,7 +96,7 @@ public class CharacterItemsPatch
                 return false;
             }
         }
-        else if (!isNoteInputHeldByUser && bugleItemIsInUse) // else, user was blowing the bugle last frame but is no longer holding a note, so cancel its user.
+        else if (!isNoteInputHeldByUser && bugleItemIsInUse) // else, user was blowing the bugle last frame but is no longer holding a note, so cancel its use.
         {
             CancelBugle();
             return false;
@@ -104,7 +130,7 @@ public class CharacterItemsPatch
             {
                 UIHelper.HideUI();
             }
-            
+
             buglesfx.item.CancelUsePrimary();
         }
     }

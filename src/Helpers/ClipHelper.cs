@@ -106,7 +106,7 @@ public class ClipHelper
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Plugin.Log.LogError($"{Plugin.LOG_PREFIX}: Error loading MP3: " + www.error);
+            Plugin.Log.LogError($"{Plugin.LOG_PREFIX}: Error loading {filename} MP3 from {mp3Path}. Check whether the MP3 file from the mod exists at this filepath. Full error: " + www.error);
         }
 
         // Get the original decoded clip
@@ -128,7 +128,7 @@ public class ClipHelper
         // Copy the samples into the new clip
         newClip.SetData(samples, 0);
 
-        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}:MP3 loaded into editable AudioClip with " +
+        Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: {filename} MP3 loaded into editable AudioClip with " +
                     newClip.samples + " samples, " +
                     newClip.channels + " channels, " +
                     newClip.frequency + " Hz");

@@ -8,16 +8,16 @@ namespace BugleMaestro.Patches;
 [HarmonyPatch(typeof(BugleSFX))]
 public class BugleSFXPatch
 {
-
-    // 1. todo - override movement while playing? (arrow keys)
-
     [HarmonyPatch(nameof(BugleSFX.Start))]
     [HarmonyPostfix]
     private static void Start_Postfix(BugleSFX __instance)
     {
-        __instance.item.gameObject.AddComponent<BugleMaestroBehaviour>();
+        if (!__instance.item.gameObject.GetComponent<BugleMaestroBehaviour>())
+        {
+            __instance.item.gameObject.AddComponent<BugleMaestroBehaviour>();
+        }
     }
-    
+
     [HarmonyPatch(nameof(BugleSFX.RPC_StartToot))]
     [HarmonyPostfix]
     private static void RPC_StartToot_Postfix(BugleSFX __instance, int clip, float pitch)

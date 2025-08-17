@@ -29,6 +29,8 @@
 		</Reference>
 		<Reference Include="$(PeakGameDirectory)\PEAK_Data\Managed\Unity.TextMeshPro.dll" Private="false">
 		</Reference>
+		<Reference Include="$(PeakGameDirectory)\PEAK_Data\Managed\Unity.InputSystem.dll" Private="false">
+		</Reference>
 		<Reference Include="$(PeakGameDirectory)\PEAK_Data\Managed\UnityEngine.UI.dll" Private="false">
 		</Reference>
 		<Reference Include="$(PeakGameDirectory)\PEAK_Data\Managed\Zorro.UI.Runtime.dll" Private="false">
