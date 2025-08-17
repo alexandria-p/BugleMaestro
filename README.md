@@ -59,6 +59,10 @@ Just like normal. When you are actively blowing a note on your bugle, the note y
 - Integration with *Virtuoso*
 - Add instructions for Bugle controls in-game by displaying instructions onscreen using the UI.
 
+## Known bugs
+
+None. Please report any bugs to the Github page or in the Peak Modding Discord.
+
 ## Contact Us
 
 🚨 If you found this mod on any site except for *Thunderstore* or *r2 Modman*, then I cannot guarantee the safety of the file you have downloaded! 🚨
@@ -68,10 +72,6 @@ Please report this back to me on my GitHub https://github.com/alexandria-p or my
 Feel free to tweet at me too if you enjoyed using this mod - especially if you attach the footage you were able to save!
 
 If you would like to report any bugs, join the Peak modding discord and find me there.
-
-## Known bugs
-
-None. Please report any bugs to the Github page or in the Peak Modding Discord.
 
 # Can I copy this mod's code? Can I contribute to this project?
 
