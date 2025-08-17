@@ -2,8 +2,8 @@
 
 [![GitHub Page](https://img.shields.io/badge/GitHub-Thunderstore%20Build-blue?logo=github&style=for-the-badge)](https://github.com/alexandria-p/BugleMaestro)
 
-[![Thunderstore Page](https://img.shields.io/thunderstore/v/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore)](https://thunderstore.io/c/peak/p/alexandria_p/Bugle_Maestro/)
-[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/peak/p/alexandria_p/Bugle_Maestro)
+[![Thunderstore Page](https://img.shields.io/thunderstore/v/alexandria_p/BugleMaestro?style=for-the-badge&logo=thunderstore)](https://thunderstore.io/c/peak/p/alexandria_p/BugleMaestro/)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/alexandria_p/BugleMaestro?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/peak/p/alexandria_p/BugleMaestro)
 
 ## Description
 
