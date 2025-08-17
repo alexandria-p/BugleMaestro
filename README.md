@@ -87,7 +87,7 @@ I wholeheartedly encourage you to look at the mod files on my GitHub to learn mo
 
 # What about mod compatibility? Are there any other ways I can play the Bugle?
 
-This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
+This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
 
 If you'd like to play the bugle like a real chambered brass instrument, please checkout *Virtuoso* (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
 
@@ -108,5 +108,7 @@ Notes about modding are included in a text file in root of the project GitHub.
 
 # Acknowledgements
 Thank you to Mondash (https://github.com/mondash) for teaching me about note frequencies and for our great chats. I look forward to working together with you again in the future 🤝
+
+Thank you to Hayden for creating the keyboard instructional diagram 🖍
 
 ChatGPT used in one file (ClipHelper.cs -> CreateAudioClipFromMp3() and CreateNewAudioClipByPitchShifting()) to figure out how to import mp3 files as Unity AudioClips. Everything else made by me, with love, by humans for humans.
