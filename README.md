@@ -30,24 +30,6 @@ Currently keyboard-only (no controller support).
 Just like normal. When you are actively blowing a note on your bugle, the note you are playing will display on the bottom-right of the screen. (Other players will not be shown the note you are playing, they will just hear it out loud)
 <p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/maestro_screenshot.jpg" width="1000"/></p>
 
-## Changelog
-
-**v1.0.1**
-- Fix mp3 load
-
-**v1.0.0**
-- Play the bugle
-
-### Contact Us
-
-🚨 If you found this mod on any site except for *Thunderstore* or *r2 Modman*, then I cannot guarantee the safety of the file you have downloaded! 🚨
-
-Please report this back to me on my GitHub https://github.com/alexandria-p or my Twitter account https://twitter.com/HumbleKraken.
-
-Feel free to tweet at me too if you enjoyed using this mod - especially if you attach the footage you were able to save!
-
-If you would like to report any bugs, join the Peak modding discord and find me there.
-
 # Installation steps
 
 ### If you've never installed mods for Peak, do this first:
@@ -62,16 +44,34 @@ If you would like to report any bugs, join the Peak modding discord and find me 
 * Run Peak via r2 Modman. You may need to already have Steam running in the background.
 * In a multiplayer lobby, *all players must follow these steps and have Bugle Maestro installed*.
 
-# Known bugs
+# Changelog
 
-None. Please report any bugs to the Github page or in the Peak Modding Discord.
+**v1.0.1**
+- Fix mp3 load
 
-# Future planned features
+**v1.0.0**
+- Play the bugle
+
+## Future planned features
 
 - Add controller support
 - Allow users to change the key-binding for this mod
 - Integration with *Virtuoso*
 - Add instructions for Bugle controls in-game by displaying instructions onscreen using the UI.
+
+## Contact Us
+
+🚨 If you found this mod on any site except for *Thunderstore* or *r2 Modman*, then I cannot guarantee the safety of the file you have downloaded! 🚨
+
+Please report this back to me on my GitHub https://github.com/alexandria-p or my Twitter account https://twitter.com/HumbleKraken.
+
+Feel free to tweet at me too if you enjoyed using this mod - especially if you attach the footage you were able to save!
+
+If you would like to report any bugs, join the Peak modding discord and find me there.
+
+## Known bugs
+
+None. Please report any bugs to the Github page or in the Peak Modding Discord.
 
 # Can I copy this mod's code? Can I contribute to this project?
 
