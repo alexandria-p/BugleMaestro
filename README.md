@@ -30,17 +30,7 @@ Currently keyboard-only (no controller support).
 Just like normal. When you are actively blowing a note on your bugle, the note you are playing will display on the bottom-right of the screen. (Other players will not be shown the note you are playing, they will just hear it out loud)
 <p align="center"><img src="https://raw.githubusercontent.com/alexandria-p/BugleMaestro/main/maestro_screenshot.jpg" width="1000"/></p>
 
-
-### Are there any other ways I can play the Bugle? What about mod compatibility?
-
-Absolutely! If you'd like to play the bugle like a real chambered brass instrument, please checkout *Virtuoso* (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
-
-* Unfortunately, you can only choose one way to play your Bugle at a time - ensure all players either enable *Bugle Maestro* or *Virtuoso* for their players. 
-* *Whichever mod you decide **not** to use, make sure all players have it disabled.
-
-This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
-
-### Changelog
+## Changelog
 
 **v1.0.1**
 - Fix mp3 load
@@ -72,7 +62,6 @@ If you would like to report any bugs, join the Peak modding discord and find me 
 * Run Peak via r2 Modman. You may need to already have Steam running in the background.
 * In a multiplayer lobby, *all players must follow these steps and have Bugle Maestro installed*.
 
-
 # Known bugs
 
 None. Please report any bugs to the Github page or in the Peak Modding Discord.
@@ -95,6 +84,15 @@ If you'd like to fork the project to add or change functionality, please message
 https://github.com/alexandria-p/BugleMaestro
 
 I wholeheartedly encourage you to look at the mod files on my GitHub to learn more about how it was made 💝 I have learnt so much by reading the source code of other mods.
+
+# What about mod compatibility? Are there any other ways I can play the Bugle?
+
+This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
+
+If you'd like to play the bugle like a real chambered brass instrument, please checkout *Virtuoso* (https://thunderstore.io/c/peak/p/mondash/Virtuoso/) by Matthew Ondash/mondash.
+
+* Unfortunately, you can only choose one way to play your Bugle at a time - ensure all players either enable *Bugle Maestro* or *Virtuoso* for their players. 
+* *Whichever mod you decide **not** to use, make sure all players have it disabled.
 
 # Dependencies 
 *If you install this mod through Thunderstore/r2Modman, these dependencies will be installed automatically.*
