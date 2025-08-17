@@ -96,7 +96,7 @@ public class ClipHelper
 
     public static async Task<AudioClip> CreateAudioClipFromMp3(string filename)
     {
-        string mp3Path = Path.Combine(Paths.PluginPath, $"{Plugin.AUTHOR_NAME}-{Plugin.MOD_NAME}", filename);
+        string mp3Path = Path.Combine(Paths.PluginPath, $"{Plugin.TEAM_NAME}-{Plugin.MOD_NAME}", filename);
         Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: {Paths.PluginPath}");
         string url = "file:///" + mp3Path;
 

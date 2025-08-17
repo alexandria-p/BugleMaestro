@@ -17,7 +17,7 @@ public partial class Plugin : BaseUnityPlugin
 
     internal static ManualLogSource Log { get; private set; } = null!;
     private Harmony? _harmonyInstance;
-    public readonly static string AUTHOR_NAME = "alexandria-p";
+    public readonly static string TEAM_NAME = "alexandria_p";
     public readonly static string MOD_NAME = "BugleMaestro";
     public readonly static string LOG_PREFIX = MOD_NAME;
     public readonly static string DEFAULT_CHARACTER_NAME = "DEFAULT_NAME";

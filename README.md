@@ -2,8 +2,8 @@
 
 [![GitHub Page](https://img.shields.io/badge/GitHub-Thunderstore%20Build-blue?logo=github&style=for-the-badge)](https://github.com/alexandria-p/BugleMaestro)
 
-[![Thunderstore Page](https://img.shields.io/thunderstore/v/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore)](https://thunderstore.io/c/content-warning/p/alexandria_p/Bugle_Maestro/)
-[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/content-warning/p/alexandria_p/Bugle_Maestro)
+[![Thunderstore Page](https://img.shields.io/thunderstore/v/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore)](https://thunderstore.io/c/peak/p/alexandria_p/Bugle_Maestro/)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/alexandria_p/Bugle_Maestro?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/peak/p/alexandria_p/Bugle_Maestro)
 
 ## Description
 
@@ -41,6 +41,9 @@ Absolutely! If you'd like to play the bugle like a real chambered brass instrume
 This mod should work with *Pocket Bugle* (https://thunderstore.io/c/peak/p/mondash/PocketBugle/) also by Matthew Ondash/mondash. You may want to remap the bind key used by *Pocket Bugle* for summoning the Bugle in-game, to make sure it does not clash with this mod's controls.
 
 ### Changelog
+
+**v1.0.1**
+- Fix mp3 load
 
 **v1.0.0**
 - Play the bugle
