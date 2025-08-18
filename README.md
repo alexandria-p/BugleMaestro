@@ -46,6 +46,9 @@ Just like normal. When you are actively blowing a note on your bugle, the note y
 
 # Changelog
 
+**v1.0.2**
+- Fix magic bugles & scoutmaster bugle
+
 **v1.0.1**
 - Fix mp3 load
 

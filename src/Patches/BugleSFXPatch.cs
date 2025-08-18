@@ -15,6 +15,7 @@ public class BugleSFXPatch
         if (!__instance.item.gameObject.GetComponent<BugleMaestroBehaviour>())
         {
             __instance.item.gameObject.AddComponent<BugleMaestroBehaviour>();
+            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: Bugle name: {__instance.item.GetName()} - {__instance.item.GetItemName()}");
         }
     }
 

@@ -10,7 +10,7 @@ namespace BugleMaestro.MonoBehaviors;
 // remember - this monobehaviour will be added to the bugle gameobject
 internal class BugleMaestroBehaviour : MonoBehaviourPun
 {
-    private static Item? _bugleItemInstance;
+    private Item? _bugleItemInstance;
 
     // Sync these variables over RPC
     // so if these variables are synced over RPC,
@@ -74,7 +74,7 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
         if (IsPlaying)
         {
             //var playerName = _bugleItemInstance?.holderCharacter?.characterName ?? Plugin.DEFAULT_CHARACTER_NAME;
-            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX} (To everyone): {playerName} Stopped playing their bugle");
+            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX} (To everyone): Stopped playing their bugle");
             ResetBugleState();
         }
     }
@@ -95,10 +95,9 @@ internal class BugleMaestroBehaviour : MonoBehaviourPun
 
     private void Awake()
     {
-        if (_bugleItemInstance) return;
-        _bugleItemInstance = gameObject.GetComponent<BugleSFX>()?.item;
-
         //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: BugleMaestroBehaviour Awake");
+
+        _bugleItemInstance = gameObject.GetComponent<BugleSFX>()?.item;        
     }
 
     private void Update()

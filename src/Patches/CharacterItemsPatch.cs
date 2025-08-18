@@ -40,16 +40,12 @@ public class CharacterItemsPatch
     {
         if (__instance == null)
         {
-            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: instance is null");
-
             //  continue as normal
             return true;
         }
 
         if (__instance.character == null || __instance.character.data == null || __instance.character.data.currentItem == null)
         {
-            //Plugin.Log.LogInfo($"{Plugin.LOG_PREFIX}: character null={__instance.character == null}, characterData null={__instance.character?.data == null}, currentItem null={__instance.character?.data?.currentItem == null}");
-
             //  continue as normal
             return true;
         }
@@ -57,6 +53,14 @@ public class CharacterItemsPatch
         var buglesfx = __instance.character.data.currentItem.gameObject.GetComponent<BugleSFX>();
         if (buglemb == null || buglesfx == null)
         {
+            // continue as normal
+            return true;
+        }
+
+        //fuel for magic bugle
+        if ((bool)buglesfx.magicBugle && buglesfx.magicBugle.currentFuel <= 0.02f) // logic pinched from BugleSFX.UpdateTooting()
+        {
+            CancelBugle(); // stop, because no fuel left.
             // continue as normal
             return true;
         }
@@ -71,7 +75,6 @@ public class CharacterItemsPatch
         // if we get here, then 
         // - character is holding the bugle and is able to play it
 
-       
         bool isNoteInputHeldByUser = buglemb.RPC_IsANoteInputBeingPressedByThePlayer;
         bool bugleItemIsInUse = buglesfx.item.isUsingPrimary;  // - detect HOLD
 
